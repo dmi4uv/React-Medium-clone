@@ -5,22 +5,22 @@ const TopBar = () => {
     return <nav className='navbar navbar-light'>
         <div className="container">
             <Link to='/' className='navbar-brand'>
-                Medium
+                SocialNetwork
             </Link>
             <ul className='nav navbar-nav pull-xs-right'>
                 <li className='nav-item'>
                     <NavLink to='/' className="nav-link" exact>
-                        Home
+                        Главная
                     </NavLink>
                 </li>
                 <li className='nav-item'>
                     <NavLink to='/login' className="nav-link" >
-                        Sign in
+                        Войти
                     </NavLink>
                 </li>
                 <li className='nav-item'>
                     <NavLink to='/register' className="nav-link" >
-                        Sign up
+                        Регистрация
                     </NavLink>
                 </li>
             </ul>
