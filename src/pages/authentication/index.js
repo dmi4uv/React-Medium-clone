@@ -1,39 +1,29 @@
 import React,{useState, useEffect} from 'react'
-
 import {Link} from "react-router-dom";
-import axios from "axios";
+import useFetch from "../../hooks/useFetch";
 
-const Authentication = () => {
+const Authentication = (props) => {
+    const isLogin = props.match.path === "/login"
+    const pageTitle = isLogin ? 'Вход' : 'Регистрация'
+    const descriptionLink = isLogin ? '/register' : '/login'
+    const descriptionText = isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?'
+    const apiUrl = isLogin ? '/users/login' : '/users'
     const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [isSubmitting, setIsSubmiting] = useState(false)
+    const [{response,isLoading,error}, doFetch] = useFetch(apiUrl)
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        setIsSubmiting(true)
-    }
-    useEffect(()=> {
-        if (!isSubmitting){
-            return
-        }
-        axios('https://conduit.productionready.io/api/users/login', {
+        const user = isLogin ? {email,password} : {email, password, username}
+        doFetch({
             method: 'post',
             data: {
-                user: {
-                    email: email,
-                    password: password
+                user
                 }
-            }
-        }).then(res => {
-            console.log("sucsess",res)
-            setIsSubmiting(false)
-            }
-        ).catch(err => {
-            console.log("error", err)
-            setIsSubmiting(false)
-        })
-    })
 
+        })
+    }
 
     return (
       <div className="auth-page">
@@ -41,13 +31,23 @@ const Authentication = () => {
               <div className="row">
                   <div className="col-md-6 offset-md-3 col-xs-12">
                       <h1 className="text-xs-center">
-                          Вход
+                          {pageTitle}
                       </h1>
                       <p className="text-xs-center">
-                          <Link to='register'>Нет аккаунта?</Link>
+                          <Link to={descriptionLink}>{descriptionText}</Link>
                       </p>
                       <form onSubmit={handleSubmit}>
                           <fieldset>
+                              {!isLogin && (
+                                  <fieldset className='form-group'>
+                                      <input type='text'
+                                             placeholder='Имя пользователя'
+                                             className='form-control form-control-lg'
+                                             value={username}
+                                             onChange={e => setUsername(e.target.value)}
+                                      />
+                                  </fieldset>
+                              )}
                               <fieldset className='form-group'>
                                   <input type='email'
                                          placeholder='email'
@@ -65,8 +65,8 @@ const Authentication = () => {
                                   />
                               </fieldset>
                               <button className='btn btn-lg btn-primary pull-xs-right'
-                              type='submit' disabled={isSubmitting}
-                              >Войти</button>
+                              type='submit' disabled={isLoading}
+                              >{pageTitle}</button>
                           </fieldset>
                       </form>
                   </div>
