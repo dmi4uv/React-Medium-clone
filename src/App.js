@@ -1,12 +1,13 @@
 import Routes from './pages/routes'
 import {BrowserRouter} from 'react-router-dom'
+import TopBar from "./components/TopBar";
 
 function App() {
   return (
           <div>
-              <h1>Hello</h1>
               <BrowserRouter>
-                <Routes/>
+                  <TopBar/>
+                  <Routes/>
               </BrowserRouter>
           </div>
   );
