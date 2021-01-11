@@ -5,7 +5,7 @@ const TopBar = () => {
     return <nav className='navbar navbar-light'>
         <div className="container">
             <Link to='/' className='navbar-brand'>
-                SocialNetwork
+                Medium clone
             </Link>
             <ul className='nav navbar-nav pull-xs-right'>
                 <li className='nav-item'>
