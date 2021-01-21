@@ -1,7 +1,9 @@
-import React,{useState, useEffect} from 'react'
+import React,{useState, useEffect, useContext} from 'react'
 import {Link,Redirect} from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import {CurrentUserContext} from "../../contexts/currentUser";
+import BackendErrorMessages from "./components/BackendErrorMessages";
 
 const Authentication = (props) => {
     const isLogin = props.match.path === "/login"
@@ -14,9 +16,8 @@ const Authentication = (props) => {
     const [password, setPassword] = useState('')
     const [{response,isLoading,error}, doFetch] = useFetch(apiUrl)
     const [isSuccessfullSubmit, setIsSuccessfullSubmit] = useState(false)
-    const [token,setToken] = useLocalStorage('token')
-
-    console.log(token)
+    const [,setToken] = useLocalStorage('token')
+    const [,setCurrentUserState] = useContext(CurrentUserContext)
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -30,12 +31,19 @@ const Authentication = (props) => {
     }
 
     useEffect(()=>{
-       if (!response) {
+        if (!response) {
            return
-       }
-       setToken(response.user.token)
+        }
+        setToken(response.user.token)
         setIsSuccessfullSubmit(true)
-    },[response])
+        setCurrentUserState(state =>({
+            ...state,
+            isLoggedIn: true,
+            isLoading: false,
+            currentUser: response.user
+
+        }))
+    },[response, setToken, setCurrentUserState])
 
     if (isSuccessfullSubmit) {
         return <Redirect to='/'/>
@@ -53,6 +61,7 @@ const Authentication = (props) => {
                           <Link to={descriptionLink}>{descriptionText}</Link>
                       </p>
                       <form onSubmit={handleSubmit}>
+                          {error && <BackendErrorMessages backendErrors = {error.errors}/>}
                           <fieldset>
                               {!isLogin && (
                                   <fieldset className='form-group'>
